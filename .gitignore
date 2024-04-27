@@ -1,18 +1,11 @@
 # dependencies
 node_modules
-.pnp
-.pnp.js
-.turbo
-yarn.lock
 
 # testing
 coverage
 
-# next.js
-.next/
-out/
-
 # production
+out
 build
 dist
 !config/build
@@ -29,13 +22,10 @@ yarn-debug.log*
 yarn-error.log*
 .pnpm-debug.log*
 
-# local env files
+# local files
 .env*.local
-
-# vercel
-.vercel
+terms
+*.http
 
 # typescript
 *.tsbuildinfo
-
-terms
