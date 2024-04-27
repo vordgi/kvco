@@ -24,9 +24,48 @@ const process: { [locale: string]: Promise<any> } = {};
 
 const getFile = async (locale: string) => {
     const filePath = `./terms/${locale}.json`;
-    const termsRow = await readFile(filePath, { encoding: "utf-8" });
-    const terms = termsRow ? JSON.parse(termsRow) : {};
-    return terms;
+    const dataRow = await readFile(filePath, { encoding: "utf-8" });
+    const data = dataRow ? JSON.parse(dataRow) : {};
+    return data;
+};
+
+type Item = { [key: string]: Item } | string | undefined | null;
+
+type Values = { [key: string]: string | undefined | null };
+
+const collectItems = (data: Item, fileKey: string, accData: { [key: string]: Values }, accKey: string) => {
+    if (data && typeof data === "object") {
+        Object.entries(data).forEach(([key, value]) => {
+            collectItems(value, fileKey, accData, accKey ? `${accKey}.${key}` : key);
+        });
+    } else {
+        if (accKey in accData && (typeof accData[accKey] !== "object" || accData[accKey] === null)) {
+            console.error(`Different schema for key "${accKey}" - inio will ignore this key`);
+        } else {
+            accData[accKey] ||= {};
+            accData[accKey][fileKey] = data;
+        }
+    }
+};
+
+const collectData = async (fileKeys: string[]) => {
+    const result: { [key: string]: Values } = {};
+    for await (const fileKey of fileKeys) {
+        const data = await getFile(fileKey);
+        collectItems(data, fileKey, result, "");
+    }
+    const sortedList = Object.entries(result)
+        .map(([key, values]) => ({ key, values }))
+        .sort((a, b) => a.key.localeCompare(b.key));
+    return sortedList;
+};
+
+const isNested = (nestingItem: Item, segment: string): nestingItem is { [key: string]: Item } => {
+    return Boolean(nestingItem && typeof nestingItem === "object" && nestingItem[segment]);
+};
+
+const isObject = (nestingItem: Item): nestingItem is { [key: string]: Item } => {
+    return Boolean(nestingItem && typeof nestingItem === "object");
 };
 
 const updateFile = async (locale: string) => {
@@ -35,12 +74,51 @@ const updateFile = async (locale: string) => {
     const terms = await getFile(locale);
 
     for await (const queueItem of processQueue) {
+        const segments = queueItem.term.split(".");
+        let term = terms;
         if (queueItem.type === "create") {
-            terms[queueItem.term] = "";
+            for (let i = 0; i < segments.length; i++) {
+                const segment = segments[i];
+                if (i === segments.length - 1) {
+                    term[segment] = "";
+                } else {
+                    term[segment] ||= {};
+                    term = term[segment];
+                }
+            }
         } else if (queueItem.type === "update") {
-            terms[queueItem.term] = queueItem.value;
+            for (let i = 0; i < segments.length; i++) {
+                const segment = segments[i];
+                if (i === segments.length - 1) {
+                    term[segment] = queueItem.value;
+                } else {
+                    term[segment] ||= {};
+                    term = term[segment];
+                }
+            }
         } else if (queueItem.type === "delete") {
-            delete terms[queueItem.term];
+            const nestingList: { segment: string; item: Item }[] = [];
+            for (let i = 0; i < segments.length; i++) {
+                const segment = segments[i];
+                if (i === segments.length - 1) {
+                    delete term[segment];
+                    for (let x = nestingList.length - 1; x >= 0; x--) {
+                        const nestingItem = nestingList[x];
+
+                        if (isNested(nestingItem.item, nestingItem.segment)) {
+                            const nestedItem = nestingItem.item[nestingItem.segment];
+                            if (isObject(nestedItem) && Object.keys(nestedItem).length === 0) {
+                                delete nestingItem.item[nestingItem.segment];
+                                continue;
+                            }
+                        }
+                        break;
+                    }
+                } else {
+                    nestingList.push({ item: term, segment });
+                    term = term[segment];
+                }
+            }
         }
     }
     writeFile(`./terms/${locale}.json`, JSON.stringify(terms, null, 4), "utf-8");
@@ -71,7 +149,7 @@ const inio = async () => {
 
         const url = new URL(req.url, "http://n");
 
-        if (url.pathname !== "/i18n/") return res.end();
+        if (url.pathname !== "/inio/") return res.end();
 
         const method = req.method?.toLowerCase();
 
@@ -81,7 +159,7 @@ const inio = async () => {
             const locale = url.searchParams.get("locale") || "";
 
             if (method === "get") {
-                const terms = await getFile(locale);
+                const terms = await collectData(["en", "de"]);
                 return res.end(JSON.stringify(terms));
             }
 
