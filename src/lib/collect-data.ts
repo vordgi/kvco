@@ -1,4 +1,4 @@
-import { type Values, type Item } from "./types";
+import { type Values, type Item, Files } from "./types";
 import { getFile } from "./get-file";
 
 const collectItems = (data: Item, fileKey: string, accData: { [key: string]: Values }, accKey: string) => {
@@ -16,11 +16,11 @@ const collectItems = (data: Item, fileKey: string, accData: { [key: string]: Val
     }
 };
 
-export const collectData = async (fileKeys: string[]) => {
+export const collectData = async (files: Files) => {
     const result: { [key: string]: Values } = {};
-    for await (const fileKey of fileKeys) {
-        const data = await getFile(fileKey);
-        collectItems(data, fileKey, result, "");
+    for await (const fileData of files) {
+        const data = await getFile(fileData.path);
+        collectItems(data, fileData.key, result, "");
     }
     const sortedList = Object.entries(result)
         .map(([key, values]) => ({ key, values }))

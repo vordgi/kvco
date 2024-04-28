@@ -1,12 +1,11 @@
 import { type Processes, type QueueItem } from "./types";
 import { updateFile } from "./update-file";
 
-export const makeChanges = (item: QueueItem, locale: string, processes: Processes) => {
-    if (!processes[locale]) processes[locale] = { target: null, queue: [] };
-    console.log(processes[locale].queue);
-    processes[locale].queue.push(item);
+export const makeChanges = (item: QueueItem, fileKey: string, filePath: string, processes: Processes) => {
+    if (!processes[fileKey]) processes[fileKey] = { target: null, queue: [] };
+    processes[fileKey].queue.push(item);
 
-    if (processes[locale].target) return;
+    if (processes[fileKey].target) return;
 
-    processes[locale].target = updateFile(locale, processes);
+    processes[fileKey].target = updateFile(fileKey, filePath, processes);
 };

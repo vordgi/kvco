@@ -3,34 +3,33 @@ import { writeFile } from "fs/promises";
 import { getFile } from "./get-file";
 import { isNested, isObject } from "./tools";
 
-export const updateFile = async (locale: string, processes: Processes) => {
-    const { queue } = processes[locale];
+export const updateFile = async (fileKey: string, filePath: string, processes: Processes) => {
+    const { queue } = processes[fileKey];
     const queueLength = queue.length;
     const processQueue = queue.splice(0, queueLength);
-    const terms = await getFile(locale);
+    const data = await getFile(filePath);
 
     for await (const queueItem of processQueue) {
-        await new Promise((resolve) => setTimeout(resolve, 3000));
-        const segments = queueItem.term.split(".");
-        let term = terms;
+        const segments = queueItem.key.split(".");
+        let segmentData = data;
         if (queueItem.type === "create") {
             for (let i = 0; i < segments.length; i++) {
                 const segment = segments[i];
                 if (i === segments.length - 1) {
-                    term[segment] = "";
+                    segmentData[segment] = "";
                 } else {
-                    term[segment] ||= {};
-                    term = term[segment];
+                    segmentData[segment] ||= {};
+                    segmentData = segmentData[segment];
                 }
             }
         } else if (queueItem.type === "update") {
             for (let i = 0; i < segments.length; i++) {
                 const segment = segments[i];
                 if (i === segments.length - 1) {
-                    term[segment] = queueItem.value;
+                    segmentData[segment] = queueItem.value;
                 } else {
-                    term[segment] ||= {};
-                    term = term[segment];
+                    segmentData[segment] ||= {};
+                    segmentData = segmentData[segment];
                 }
             }
         } else if (queueItem.type === "delete") {
@@ -38,7 +37,7 @@ export const updateFile = async (locale: string, processes: Processes) => {
             for (let i = 0; i < segments.length; i++) {
                 const segment = segments[i];
                 if (i === segments.length - 1) {
-                    delete term[segment];
+                    delete segmentData[segment];
                     for (let x = nestingList.length - 1; x >= 0; x--) {
                         const nestingItem = nestingList[x];
 
@@ -52,20 +51,20 @@ export const updateFile = async (locale: string, processes: Processes) => {
                         break;
                     }
                 } else {
-                    nestingList.push({ item: term, segment });
-                    term = term[segment];
+                    nestingList.push({ item: segmentData, segment });
+                    segmentData = segmentData[segment];
                 }
             }
         }
     }
-    writeFile(`./terms/${locale}.json`, JSON.stringify(terms, null, 4), "utf-8");
-    console.log(`Updated ${locale} terms, changes count: ${queueLength}`);
+    writeFile(filePath, JSON.stringify(data, null, 4), "utf-8");
+    console.log(`Updated ${fileKey} data, changes count: ${queueLength}`);
 
     const nextChangesCount = queue.length;
 
     if (nextChangesCount) {
-        processes[locale].target = updateFile(locale, processes);
+        processes[fileKey].target = updateFile(fileKey, filePath, processes);
     } else {
-        processes[locale].target = null;
+        processes[fileKey].target = null;
     }
 };

@@ -1,58 +1,65 @@
 import { type IncomingMessage, type ServerResponse } from "http";
-import { type Processes } from "../lib/types";
+import { type Processes, type Config } from "../lib/types";
 import { makeChanges } from "../lib/make-changes";
 import { collectData } from "../lib/collect-data";
 
 const processes: Processes = {};
 
-const inioRoute = async (req: IncomingMessage & { url: URL }, res: ServerResponse) => {
+const inioRoute = async (req: IncomingMessage & { url: URL }, res: ServerResponse, config: Config) => {
     const method = req.method?.toLowerCase();
+    const { files } = config;
 
     try {
-        const term = req.url.searchParams.get("term") || "";
+        const key = req.url.searchParams.get("key") || "";
         const value = req.url.searchParams.get("value") || "";
-        const locale = req.url.searchParams.get("locale") || "";
+        const fileKey = req.url.searchParams.get("fileKey") || "";
 
         if (method === "get") {
-            const terms = await collectData(["en", "de"]);
-            return res.end(JSON.stringify(terms));
+            const data = await collectData(files);
+            return res.end(JSON.stringify(data));
         }
 
+        const fileData = files.find((f) => f.key === fileKey);
+        if (!fileData) return res.end();
+
         if (method === "post") {
-            console.log(`Create term "${term}"`);
+            console.log(`Create key "${key}"`);
             makeChanges(
                 {
-                    term,
+                    key,
                     type: "create",
                 },
-                locale,
+                fileKey,
+                fileData.path,
                 processes,
             );
             return res.end();
         }
 
         if (method === "delete") {
-            console.log(`Delete term "${term}"`);
+            console.log(`Delete key "${key}"`);
             makeChanges(
                 {
-                    term,
+                    key,
                     type: "delete",
                 },
-                locale,
+                fileKey,
+                fileData.path,
                 processes,
             );
             return res.end();
         }
 
         if (method === "put") {
-            console.log(`Update term "${term}"`);
+            console.log(`Update key "${key}"`);
             makeChanges(
                 {
-                    term,
+                    key,
                     type: "update",
                     value: value || "",
                 },
-                locale,
+                fileKey,
+                fileData.path,
                 processes,
             );
             return res.end();
