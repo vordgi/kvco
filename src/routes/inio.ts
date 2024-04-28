@@ -16,7 +16,7 @@ const inioRoute = async (req: IncomingMessage & { url: URL }, res: ServerRespons
 
         if (method === "get") {
             const data = await collectData(files);
-            return res.end(JSON.stringify(data));
+            return res.end(JSON.stringify({ list: data, keys: files.map(({ key }) => key) }));
         }
 
         const fileData = files.find((f) => f.key === fileKey);
