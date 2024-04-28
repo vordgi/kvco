@@ -1,16 +1,16 @@
 export type QueueItem =
     | {
           type: "update";
-          term: string;
+          key: string;
           value: string;
       }
     | {
           type: "create";
-          term: string;
+          key: string;
       }
     | {
           type: "delete";
-          term: string;
+          key: string;
       };
 
 export type Item = { [key: string]: Item } | string | undefined | null;
@@ -19,4 +19,8 @@ export type Values = { [key: string]: string | undefined | null };
 
 export type Process = { target: Promise<void> | null; queue: QueueItem[] };
 
-export type Processes = { [locale: string]: Process };
+export type Processes = { [fileKey: string]: Process };
+
+export type Files = { path: string; key: string }[];
+
+export type Config = { files: Files };
