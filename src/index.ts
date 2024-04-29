@@ -6,7 +6,7 @@ import getConfig from "./lib/get-config";
 const inio = async () => {
     const config = await getConfig();
     const headers = {
-        "Access-Control-Allow-Origin": "*" /* @dev First, read about security */,
+        "Access-Control-Allow-Origin": "*",
         "Access-Control-Allow-Methods": "OPTIONS, POST, GET, DELETE, PUT",
     };
 
