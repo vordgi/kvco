@@ -10,14 +10,15 @@ const inioRoute = async (req: IncomingMessage & { url: URL }, res: ServerRespons
     const { files } = config;
 
     try {
-        const key = req.url.searchParams.get("key") || "";
-
         if (method === "get") {
+            const search = req.url.searchParams.get("s") || "";
             const data = await collectData(files);
-            return res.end(JSON.stringify({ list: data, keys: files.map(({ key }) => key) }));
+            const resultData = search ? data.filter((item) => item.key.includes(search)) : data;
+            return res.end(JSON.stringify({ list: resultData, keys: files.map(({ key }) => key) }));
         }
 
         if (method === "post") {
+            const key = req.url.searchParams.get("key") || "";
             console.log(`Create key "${key}"`);
             files.forEach((fileData) => {
                 makeChanges(
@@ -34,6 +35,7 @@ const inioRoute = async (req: IncomingMessage & { url: URL }, res: ServerRespons
         }
 
         if (method === "delete") {
+            const key = req.url.searchParams.get("key") || "";
             console.log(`Delete key "${key}"`);
             files.forEach((fileData) => {
                 makeChanges(
@@ -50,6 +52,7 @@ const inioRoute = async (req: IncomingMessage & { url: URL }, res: ServerRespons
         }
 
         if (method === "put") {
+            const key = req.url.searchParams.get("key") || "";
             const value = req.url.searchParams.get("value") || "";
             const fileKey = req.url.searchParams.get("fileKey") || "";
             const fileData = files.find((f) => f.key === fileKey);
