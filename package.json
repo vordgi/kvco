@@ -1,6 +1,6 @@
 {
-  "name": "@nimpl/inio",
-  "version": "0.3.4",
+  "name": "inio",
+  "version": "0.4.0",
   "description": "",
   "bin": {
     "inio": "./dist/index.js",
