@@ -37,6 +37,8 @@ export const updateFile = async (fileKey: string, filePath: string, processes: P
             for (let i = 0; i < segments.length; i++) {
                 const segment = segments[i];
                 if (i === segments.length - 1) {
+                    if (!(segment in segmentData)) break;
+
                     delete segmentData[segment];
                     for (let x = nestingList.length - 1; x >= 0; x--) {
                         const nestingItem = nestingList[x];
@@ -50,14 +52,14 @@ export const updateFile = async (fileKey: string, filePath: string, processes: P
                         }
                         break;
                     }
-                } else {
+                } else if (segment in segmentData) {
                     nestingList.push({ item: segmentData, segment });
                     segmentData = segmentData[segment];
                 }
             }
         }
     }
-    writeFile(filePath, JSON.stringify(data, null, 4), "utf-8");
+    await writeFile(filePath, JSON.stringify(data, null, 4), "utf-8");
     console.log(`Updated ${fileKey} data, changes count: ${queueLength}`);
 
     const nextChangesCount = queue.length;
