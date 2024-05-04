@@ -1,7 +1,9 @@
-import { type Values, type Item, Files } from "./types";
+import { type Values, type Item, type Files } from "./types";
 import { getFile } from "./get-file";
 
 const collectItems = (data: Item, fileKey: string, accData: { [key: string]: Values }, accKey: string) => {
+    if (data === null && accKey.match(/\.[0-9]+$/)) return;
+
     if (data && typeof data === "object") {
         Object.entries(data).forEach(([key, value]) => {
             collectItems(value, fileKey, accData, accKey ? `${accKey}.${key}` : key);
