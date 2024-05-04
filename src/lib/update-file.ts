@@ -3,6 +3,10 @@ import { writeFile } from "fs/promises";
 import { getFile } from "./get-file";
 import { isNested, isObject } from "./tools";
 
+const isIndex = (key: string) => {
+    return Number.isNaN(+key);
+};
+
 export const updateFile = async (fileKey: string, filePath: string, processes: Processes) => {
     const { queue } = processes[fileKey];
     const queueLength = queue.length;
@@ -18,7 +22,7 @@ export const updateFile = async (fileKey: string, filePath: string, processes: P
                 if (i === segments.length - 1) {
                     segmentData[segment] = "";
                 } else {
-                    segmentData[segment] ||= {};
+                    segmentData[segment] ||= isIndex(segment) ? [] : {};
                     segmentData = segmentData[segment];
                 }
             }
@@ -28,7 +32,7 @@ export const updateFile = async (fileKey: string, filePath: string, processes: P
                 if (i === segments.length - 1) {
                     segmentData[segment] = queueItem.value;
                 } else {
-                    segmentData[segment] ||= {};
+                    segmentData[segment] ||= isIndex(segment) ? [] : {};
                     segmentData = segmentData[segment];
                 }
             }
