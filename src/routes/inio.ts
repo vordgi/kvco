@@ -11,9 +11,17 @@ const inioRoute = async (req: IncomingMessage & { url: URL }, res: ServerRespons
 
     try {
         if (method === "get") {
-            const search = req.url.searchParams.get("s") || "";
+            const search = req.url.searchParams.get("s");
+            const page = req.url.searchParams.get("p");
+            const countOnPage = req.url.searchParams.get("c");
             const data = await collectData(files);
-            const resultData = search ? data.filter((item) => item.key.includes(search)) : data;
+            let resultData = data;
+            if (search) {
+                resultData = data.filter((item) => item.key.includes(search));
+            }
+            if (page && countOnPage) {
+                resultData = resultData.slice((+page - 1) * +countOnPage, (+page - 1) * +countOnPage);
+            }
             return res.end(JSON.stringify({ list: resultData, keys: files.map(({ key }) => key) }));
         }
 
