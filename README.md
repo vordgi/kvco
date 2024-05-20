@@ -19,10 +19,33 @@ npm install @nimpl/inio -g
 ## Usage
 
 ```bash
-inio './langs/<key>.json'
+inio
 ```
 
-Where './langs/<key>.json' - is the pattern of files that you want to edit, with the following file structure:
+## Configuration
+
+To configure **inio**, create an `inio.config.js` file in the `.json` files directory
+
+**Options**
+
+`pattern` - the pattern by which to search for files. The pattern should contain a dynamic part `<key>`, f.e. "`./terms/<key>.json`" (by default "`./<key>.json`")
+
+Now simply call `inio` in the terminal:
+```bash
+inio
+```
+
+You can also specify the path to the config by setting the `CONFIG_PATH` environment variable:
+```bash
+CONFIG_PATH="../../inio.config.js" inio
+```
+
+You can also pass package options through environment variables, converting options to **UPPER_SNAKE_CASE** format:
+```bash
+PATTERN="./terms/<key>.json" inio
+```
+
+Where `./terms/<key>.json` - is the pattern of files that you want to edit, with the following file structure:
 
 ```
 root
@@ -32,7 +55,7 @@ root
 ----fr.json
 ```
 
-The pattern should contain `<key>` - this is a dynamic parameter, equivalent to * in glob rules.
+The pattern should contain `<key>` - this is a dynamic parameter, equivalent to `*` in glob rules.
 
 The utility will start a local server, through which all your file changes will subsequently occur.
 

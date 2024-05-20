@@ -3,9 +3,10 @@ import { existsSync } from "fs";
 import { findFiles } from "./find-files";
 
 const DEFAULT_PATTERN = "./<key>.json";
+const DEFAULT_CONFIG_PATH = "./inio.config.js";
 
 export const getConfig = async () => {
-    const inioConfigPath = path.join(process.cwd(), "./inio.config.js");
+    const inioConfigPath = path.join(process.cwd(), process.env.CONFIG_PATH || DEFAULT_CONFIG_PATH);
     let inioConfig;
     if (existsSync(inioConfigPath)) {
         const inioConfigModule = await import(inioConfigPath);
