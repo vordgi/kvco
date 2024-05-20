@@ -4,8 +4,7 @@
   "description": "",
   "bin": {
     "inio": "./dist/index.js",
-    "nimpl-inio": "./dist/index.js",
-    "@nimpl/inio": "./dist/index.js"
+    "nimpl-inio": "./dist/index.js"
   },
   "main": "./dist/index.js",
   "scripts": {
