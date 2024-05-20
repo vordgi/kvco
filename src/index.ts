@@ -3,6 +3,28 @@ import { createServer as createHttpServer } from "http";
 import { getConfig } from "./lib/get-config";
 import inioRoute from "./routes/inio";
 
+const HELP = `
+To configure the application, create an "inio.config.js" file in the root of the .json files storage.
+Options:
+- pattern - the pattern by which to search for files. The pattern should contain a dynamic part <key>, f.e. "./terms/<key>.json" (by default "./<key>.json")
+
+Now simply call "inio" in the terminal:
+> inio
+
+
+You can also specify the path to the config by setting the CONFIG_PATH environment variable:
+> CONFIG_PATH="../../inio.config.js" inio
+
+
+You can also pass package settings through environment variables, converting options to CAMEL_SNAKE_CASE format:
+> PATTERN="./terms/<key>.json" inio
+`;
+
+if (process.argv.includes("help")) {
+    console.log(HELP);
+    process.exit();
+}
+
 const inio = async () => {
     const config = await getConfig();
     const server = createHttpServer(async (req, res) => {
