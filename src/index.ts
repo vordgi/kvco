@@ -1,7 +1,7 @@
 #! /usr/bin/env node
 import { createServer as createHttpServer } from "http";
+import { getConfig } from "./lib/get-config";
 import inioRoute from "./routes/inio";
-import getConfig from "./lib/get-config";
 
 const inio = async () => {
     const config = await getConfig();

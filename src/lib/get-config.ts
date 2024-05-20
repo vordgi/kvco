@@ -1,45 +1,28 @@
-import fs from "fs/promises";
 import path from "path";
 import { existsSync } from "fs";
+import { findFiles } from "./find-files";
 
-const getConfig = async () => {
-    const pattern = process.argv[2];
+const DEFAULT_PATTERN = "./<key>.json";
+
+export const getConfig = async () => {
+    const inioConfigPath = path.join(process.cwd(), "./inio.config.js");
+    let inioConfig;
+    if (existsSync(inioConfigPath)) {
+        const inioConfigModule = await import(inioConfigPath);
+        inioConfig = inioConfigModule.default;
+    }
+    const pattern = process.env.PATTERN || inioConfig?.pattern || DEFAULT_PATTERN;
 
     if (!pattern) {
-        console.error("Provide files pattern, f.e. \"inio './terms/<key>.json'\"");
+        console.error('Provide files pattern, call "inio help" for more information');
         process.exit();
     }
 
     if (!pattern.includes("<key>")) {
-        console.error("Provide key in files pattern, f.e. \"inio './terms/<key>.json'\"");
+        console.error('Provide key in files pattern, call "inio help" for more information');
         process.exit();
     }
 
-    const [dir, subPath] = pattern.split("<key>");
-    const absoluteDir = path.join(process.cwd(), dir);
-    const fileList = await fs.readdir(absoluteDir, { withFileTypes: true });
-
-    const files = fileList.reduce<{ path: string; key: string }[]>((acc, cur) => {
-        if (cur.isFile()) {
-            if (cur.name.endsWith(subPath)) {
-                const fullPath = path.join(absoluteDir, cur.name);
-                acc.push({ path: fullPath, key: cur.name.replace(subPath, "") });
-            }
-        } else {
-            const fullPath = path.join(absoluteDir, cur.name, subPath);
-            if (existsSync(fullPath)) {
-                acc.push({ path: fullPath, key: cur.name });
-            }
-        }
-        return acc;
-    }, []);
-
-    if (!files.length) {
-        console.error("Can not find files by pattern");
-        process.exit();
-    }
-
+    const files = await findFiles(pattern);
     return { files };
 };
-
-export default getConfig;
