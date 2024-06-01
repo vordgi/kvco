@@ -23,4 +23,4 @@ export type Processes = { [fileKey: string]: Process };
 
 export type Files = { path: string; key: string }[];
 
-export type Config = { files: Files };
+export type Config = { files: Files; pattern: string; version: string };

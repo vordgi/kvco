@@ -1,11 +1,11 @@
 import { type IncomingMessage, type ServerResponse } from "http";
-import { type Processes, type Config } from "../lib/types";
-import { makeChanges } from "../lib/make-changes";
-import { collectData } from "../lib/collect-data";
+import { type Processes, type Config } from "../../lib/types";
+import { makeChanges } from "../../lib/make-changes";
+import { collectData } from "../../lib/collect-data";
 
 const processes: Processes = {};
 
-const inioRoute = async (req: IncomingMessage & { url: URL }, res: ServerResponse, config: Config) => {
+const editorRoute = async (req: IncomingMessage & { url: URL }, res: ServerResponse, config: Config) => {
     const method = req.method?.toLowerCase();
     const { files } = config;
 
@@ -86,4 +86,4 @@ const inioRoute = async (req: IncomingMessage & { url: URL }, res: ServerRespons
     }
 };
 
-export default inioRoute;
+export default editorRoute;
