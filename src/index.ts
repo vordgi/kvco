@@ -1,7 +1,8 @@
 #! /usr/bin/env node
 import { createServer as createHttpServer } from "http";
 import { getConfig } from "./lib/get-config";
-import inioRoute from "./routes/inio";
+import editorRoute from "./routes/editor";
+import configRoute from "./routes/config";
 
 const HELP = `
 To configure inio, create an "inio.config.js" file in the .json files directory
@@ -36,7 +37,8 @@ const inio = async () => {
 
         const url = new URL(req.url, "http://n");
 
-        if (url.pathname === "/inio/") return inioRoute(Object.assign(req, { url }), res, config);
+        if (url.pathname === "/editor/") return editorRoute(Object.assign(req, { url }), res, config);
+        if (url.pathname === "/config/") return configRoute(Object.assign(req, { url }), res, config);
 
         return res.end();
     });
