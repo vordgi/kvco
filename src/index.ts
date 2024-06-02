@@ -39,6 +39,8 @@ const inio = async () => {
         const pathname = url.pathname;
         const method = req.method.toUpperCase();
 
+        if (method === "OPTIONS") return res.end();
+
         if (!isObjectKey(pathname, routes)) {
             res.statusCode = 404;
             return res.end();
