@@ -1,3 +1,5 @@
+import { type IncomingMessage } from "http";
+
 export type QueueItem =
     | {
           type: "update";
@@ -24,3 +26,5 @@ export type Processes = { [fileKey: string]: Process };
 export type Files = { path: string; key: string }[];
 
 export type Config = { files: Files; pattern: string; version: string };
+
+export type InioRequest = IncomingMessage & { url: URL; config: Config };

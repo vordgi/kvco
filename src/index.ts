@@ -1,8 +1,8 @@
 #! /usr/bin/env node
 import { createServer as createHttpServer } from "http";
 import { getConfig } from "./lib/get-config";
-import editorRoute from "./routes/editor";
-import configRoute from "./routes/config";
+import { isObjectKey } from "./lib/tools";
+import { routes } from "./routes";
 
 const HELP = `
 To configure inio, create an "inio.config.js" file in the .json files directory
@@ -33,14 +33,24 @@ const inio = async () => {
         res.setHeader("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT");
         res.setHeader("Access-Control-Allow-Private-Network", "true");
 
-        if (!req.url) return res.end();
+        if (!req.url || !req.method) return res.end();
 
         const url = new URL(req.url, "http://n");
+        const pathname = url.pathname;
+        const method = req.method.toUpperCase();
 
-        if (url.pathname === "/editor/") return editorRoute(Object.assign(req, { url }), res, config);
-        if (url.pathname === "/config/") return configRoute(Object.assign(req, { url }), res, config);
+        if (!isObjectKey(pathname, routes)) {
+            res.statusCode = 404;
+            return res.end();
+        }
 
-        return res.end();
+        const route = routes[pathname];
+        if (!isObjectKey(method, route)) {
+            res.statusCode = 404;
+            return res.end();
+        }
+
+        return route[method](Object.assign(req, { url, config }), res);
     });
 
     server.listen(8000, () => {
