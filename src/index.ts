@@ -39,6 +39,10 @@ const inio = async () => {
         const pathname = url.pathname;
         const method = req.method.toUpperCase();
 
+        if (process.env.DEBUG) {
+            console.log(`${method} ${url.toString().replace("http://n", "")}`);
+        }
+
         if (method === "OPTIONS") return res.end();
 
         if (!isObjectKey(pathname, routes)) {
