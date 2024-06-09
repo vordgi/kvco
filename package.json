@@ -1,7 +1,7 @@
 {
   "name": "@nimpl/inio",
   "version": "0.6.2",
-  "description": "",
+  "description": "Utility for editing a group of JSON files",
   "bin": {
     "inio": "./dist/index.js",
     "nimpl-inio": "./dist/index.js"
