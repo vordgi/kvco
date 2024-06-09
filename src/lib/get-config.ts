@@ -1,13 +1,11 @@
 import path from "path";
 import { existsSync } from "fs";
-import { type Config } from "./types";
-import { findFiles } from "./find-files";
-import { version } from "../../package.json";
+import { Configuration } from "./configuration";
 
 const DEFAULT_PATTERN = "./<key>.json";
 const DEFAULT_CONFIG_PATH = "./inio.config.js";
 
-export const getConfig = async (): Promise<Config> => {
+export const getConfig = async (): Promise<Configuration> => {
     const inioConfigPath = path.join(process.cwd(), process.env.CONFIG_PATH || DEFAULT_CONFIG_PATH);
     let inioConfig;
     if (existsSync(inioConfigPath)) {
@@ -26,6 +24,6 @@ export const getConfig = async (): Promise<Config> => {
         process.exit();
     }
 
-    const files = await findFiles(pattern);
-    return { files, pattern, version };
+    const files = await Configuration.loadFiles(pattern);
+    return new Configuration(pattern, files);
 };
