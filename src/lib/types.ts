@@ -23,7 +23,15 @@ export type Process = { target: Promise<void> | null; queue: QueueItem[] };
 
 export type Processes = { [fileKey: string]: Process };
 
-export type Files = { path: string; key: string }[];
+export type SegmentItem = {
+    name: string;
+    isDir: boolean;
+    path: string;
+    key?: string;
+};
+
+export type File = { path: string; key: string };
+export type Files = File[];
 
 export type Config = { files: Files; pattern: string; version: string };
 
