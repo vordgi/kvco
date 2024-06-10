@@ -1,7 +1,7 @@
 {
   "name": "@nimpl/inio",
-  "version": "0.6.2",
-  "description": "",
+  "version": "0.7.0",
+  "description": "Utility for editing a group of JSON files",
   "bin": {
     "inio": "./dist/index.js",
     "nimpl-inio": "./dist/index.js"
@@ -10,6 +10,7 @@
   "scripts": {
     "dev": "ts-node src/index.ts",
     "build": "tsc",
+    "start": "node dist/index.js",
     "nimpl:inio": "pnpm --filter @nimpl/inio",
     "lint": "eslint .",
     "eslint": "eslint",
@@ -21,7 +22,10 @@
   "keywords": [
     "cli",
     "i18n",
-    "inio"
+    "inio",
+    "json",
+    "editor",
+    "nimpl"
   ],
   "repository": {
     "type": "git",

@@ -23,8 +23,8 @@ yarn-error.log*
 .pnpm-debug.log*
 
 # local files
-.env*.local
-terms
+*.local
+*_local
 *.http
 
 # typescript
