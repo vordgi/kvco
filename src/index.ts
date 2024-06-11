@@ -60,7 +60,7 @@ const inio = async () => {
     });
 
     server.listen(8000, () => {
-        console.log("inio: Server runned, visit https://inio.nimpl.tech to continue");
+        console.log("inio: Server runned, visit https://inio.nimpl.tech/edit to continue");
     });
 };
 
