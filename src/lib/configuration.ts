@@ -11,12 +11,25 @@ export class Configuration {
     version = version;
 
     constructor(pattern: string, files: Configuration["files"]) {
+        Configuration.preventInvalidPattern(pattern);
         this._pattern = pattern;
         this.files = files;
     }
 
     get pattern() {
         return this._pattern;
+    }
+
+    static validatePattern(pattern: string) {
+        const isInScope = !path.relative(process.cwd(), path.join(process.cwd(), pattern)).startsWith("..");
+        return isInScope;
+    }
+
+    static preventInvalidPattern(pattern: string) {
+        if (!Configuration.validatePattern(pattern)) {
+            console.log(`Invalid pattern: "${pattern}". It goes beyond tool scope`);
+            process.exit();
+        }
     }
 
     static async loadFiles(pattern: string) {
@@ -39,6 +52,7 @@ export class Configuration {
     }
 
     async updatePattern(pattern: string) {
+        Configuration.preventInvalidPattern(pattern);
         const files = await Configuration.loadFiles(pattern);
         this.files = files;
         this._pattern = pattern;
