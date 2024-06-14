@@ -6,6 +6,7 @@ export const GET = async (req: InioRequest, res: ServerResponse) => {
         JSON.stringify({
             version: req.config.version,
             pattern: req.config.pattern,
+            filters: req.config.filters,
         }),
     );
 };
@@ -21,6 +22,12 @@ export const PUT = async (req: InioRequest, res: ServerResponse) => {
         });
     });
     const json = JSON.parse(text);
-    await req.config.updatePattern(json.pattern);
+    if (json.pattern) {
+        await req.config.updatePattern(json.pattern);
+    }
+    if (json.filters) {
+        await req.config.updateFilters(json.filters);
+    }
+
     return res.end(JSON.stringify(req.config));
 };
