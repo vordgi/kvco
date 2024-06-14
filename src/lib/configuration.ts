@@ -10,6 +10,10 @@ export class Configuration {
 
     version = version;
 
+    filters: {
+        missings?: boolean;
+    } = {};
+
     constructor(pattern: string, files: Configuration["files"]) {
         Configuration.preventInvalidPattern(pattern);
         this._pattern = pattern;
@@ -56,5 +60,9 @@ export class Configuration {
         const files = await Configuration.loadFiles(pattern);
         this.files = files;
         this._pattern = pattern;
+    }
+
+    async updateFilters(filters: { [key: string]: string }) {
+        this.filters = filters;
     }
 }
