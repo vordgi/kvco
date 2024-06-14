@@ -17,6 +17,9 @@ export const GET = async (req: InioRequest, res: ServerResponse) => {
     if (page && countOnPage) {
         resultData = resultData.slice((+page - 1) * +countOnPage, (+page - 1) * +countOnPage);
     }
+    if (req.config.filters.missings) {
+        resultData = resultData.filter((item) => req.config.files.some(({ key }) => !item.values[key]));
+    }
     return res.end(JSON.stringify({ list: resultData, keys: req.config.files.map(({ key }) => key) }));
 };
 
