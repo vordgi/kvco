@@ -14,13 +14,20 @@ export const GET = async (req: InioRequest, res: ServerResponse) => {
     if (search) {
         resultData = data.filter((item) => item.key.includes(search));
     }
-    if (page && countOnPage) {
-        resultData = resultData.slice((+page - 1) * +countOnPage, (+page - 1) * +countOnPage);
-    }
     if (req.config.filters.missings) {
         resultData = resultData.filter((item) => req.config.files.some(({ key }) => !item.values[key]));
     }
-    return res.end(JSON.stringify({ list: resultData, keys: req.config.files.map(({ key }) => key) }));
+    let paginatedData = resultData;
+    if (page && countOnPage) {
+        paginatedData = resultData.slice((+page - 1) * +countOnPage, +page * +countOnPage);
+    }
+    return res.end(
+        JSON.stringify({
+            list: paginatedData,
+            keys: req.config.files.map(({ key }) => key),
+            total: resultData.length,
+        }),
+    );
 };
 
 export const POST = async (req: InioRequest, res: ServerResponse) => {
