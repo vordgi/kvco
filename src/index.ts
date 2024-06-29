@@ -17,11 +17,7 @@ const CLIENT_ORIGIN = process.env.NODE_ENV === "development" ? "*" : "https://in
 const inio = async () => {
     const config = await getConfig();
 
-    const io = new Server({
-        cors: {
-            origin: CLIENT_ORIGIN,
-        },
-    });
+    const io = new Server();
 
     const server = createHttpServer(async (req, res) => {
         res.setHeader("Access-Control-Allow-Origin", CLIENT_ORIGIN);
@@ -53,8 +49,24 @@ const inio = async () => {
 
         return route[method](Object.assign(req, { url, config }), res);
     });
-
     io.attach(server);
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    io.engine.use((req: any, res: any, next: any) => {
+        if (!res.headersSent) {
+            res.setHeader("Access-Control-Allow-Origin", CLIENT_ORIGIN);
+            res.setHeader("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT");
+            res.setHeader("Access-Control-Allow-Private-Network", "true");
+            if (req.method === "OPTIONS") {
+                req.res.statusCode = 204;
+                req.res.setHeader("Content-Length", "0");
+                req.res.end();
+            } else {
+                next();
+            }
+        } else {
+            next();
+        }
+    });
     const onConnection = (socket: Socket) => {
         editorHandlers(io, socket, config);
     };
