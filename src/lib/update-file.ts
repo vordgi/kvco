@@ -8,12 +8,12 @@ const isIndex = (key: string) => {
 };
 
 export const updateFile = async (fileKey: string, filePath: string, processes: Processes) => {
+    const data = await getFile(filePath);
     const { queue } = processes[fileKey];
     const queueLength = queue.length;
     const processQueue = queue.splice(0, queueLength);
-    const data = await getFile(filePath);
 
-    for await (const queueItem of processQueue) {
+    for (const queueItem of processQueue) {
         const segments = queueItem.key.split(".");
         let segmentData = data;
         if (queueItem.type === "create") {
