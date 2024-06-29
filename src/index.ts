@@ -3,33 +3,28 @@ import { createServer as createHttpServer } from "http";
 import { getConfig } from "./lib/get-config";
 import { isObjectKey } from "./lib/tools";
 import { routes } from "./routes";
-
-const HELP = `
-To configure inio, create an "inio.config.js" file in the .json files directory
-Options:
-- pattern - the pattern by which to search for files. The pattern should contain a dynamic part <key>, f.e. "./terms/<key>.json" (by default "./<key>.json")
-
-Now simply call "inio" in the terminal:
-> inio
-
-
-You can also specify the path to the config by setting the "CONFIG_PATH" environment variable:
-> CONFIG_PATH="../../inio.config.js" inio
-
-
-You can also pass package options through environment variables, converting options to UPPER_SNAKE_CASE format:
-> PATTERN="./terms/<key>.json" inio
-`;
+import { editorHandlers } from "./sockets/editor/handlers";
+import { Server, Socket } from "socket.io";
+import { HELP } from "./data/messages";
 
 if (process.argv.includes("help")) {
     console.log(HELP);
     process.exit();
 }
 
+const CLIENT_ORIGIN = process.env.NODE_ENV === "development" ? "*" : "https://inio.nimpl.tech";
+
 const inio = async () => {
     const config = await getConfig();
+
+    const io = new Server({
+        cors: {
+            origin: CLIENT_ORIGIN,
+        },
+    });
+
     const server = createHttpServer(async (req, res) => {
-        res.setHeader("Access-Control-Allow-Origin", "*");
+        res.setHeader("Access-Control-Allow-Origin", CLIENT_ORIGIN);
         res.setHeader("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT");
         res.setHeader("Access-Control-Allow-Private-Network", "true");
 
@@ -58,6 +53,13 @@ const inio = async () => {
 
         return route[method](Object.assign(req, { url, config }), res);
     });
+
+    io.attach(server);
+    const onConnection = (socket: Socket) => {
+        editorHandlers(io, socket, config);
+    };
+
+    io.on("connection", onConnection);
 
     server.listen(8000, () => {
         console.log("inio: Server runned, visit https://inio.nimpl.tech/edit to continue");
