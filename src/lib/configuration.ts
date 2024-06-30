@@ -1,4 +1,4 @@
-import { type Files } from "./types";
+import { type Files, type ConfigurationOptions } from "./types";
 import { findSegmentItems } from "./find-segment-items";
 import { version } from "../../package.json";
 import path from "path";
@@ -10,14 +10,18 @@ export class Configuration {
 
     version = version;
 
+    indent: string;
+
     filters: {
         missings?: boolean;
     } = {};
 
-    constructor(pattern: string, files: Configuration["files"]) {
+    constructor(options: ConfigurationOptions, files: Configuration["files"]) {
+        const { pattern, indentSize, indentType } = options;
         Configuration.preventInvalidPattern(pattern);
         this._pattern = pattern;
         this.files = files;
+        this.indent = indentType === "tab" ? "\t".repeat(indentSize) : " ".repeat(indentSize);
     }
 
     get pattern() {

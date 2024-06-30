@@ -4,6 +4,8 @@ import { Configuration } from "./configuration";
 
 const DEFAULT_PATTERN = "./<key>.json";
 const DEFAULT_CONFIG_PATH = "./inio.config.js";
+const DEFAULT_INDENT_TYPE = "space";
+const DEFAULT_INDENT_SIZE = 4;
 
 export const getConfig = async (): Promise<Configuration> => {
     const inioConfigPath = path.join(process.cwd(), process.env.CONFIG_PATH || DEFAULT_CONFIG_PATH);
@@ -23,7 +25,9 @@ export const getConfig = async (): Promise<Configuration> => {
         console.error('Provide key in files pattern, call "inio help" for more information');
         process.exit();
     }
+    const indentType = process.env.INDENT_TYPE || inioConfig?.indent?.type || DEFAULT_INDENT_TYPE;
+    const indentSize = process.env.INDENT_size || inioConfig?.indent?.size || DEFAULT_INDENT_SIZE;
 
     const files = await Configuration.loadFiles(pattern);
-    return new Configuration(pattern, files);
+    return new Configuration({ pattern, indentType, indentSize }, files);
 };
