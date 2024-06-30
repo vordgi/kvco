@@ -1,4 +1,4 @@
-import { type Item, type Processes } from "./types";
+import { UpdateFileOpts, type Item, type Processes } from "./types";
 import { writeFile } from "fs/promises";
 import { getFile } from "./get-file";
 import { isNested, isObject } from "./tools";
@@ -7,7 +7,8 @@ const isIndex = (key: string) => {
     return Number.isNaN(+key);
 };
 
-export const updateFile = async (fileKey: string, filePath: string, processes: Processes) => {
+export const updateFile = async (opts: UpdateFileOpts, processes: Processes) => {
+    const { fileKey, filePath, indent } = opts;
     const data = await getFile(filePath);
     const { queue } = processes[fileKey];
     const queueLength = queue.length;
@@ -63,13 +64,13 @@ export const updateFile = async (fileKey: string, filePath: string, processes: P
             }
         }
     }
-    await writeFile(filePath, JSON.stringify(data, null, 4), "utf-8");
+    await writeFile(filePath, JSON.stringify(data, null, indent), "utf-8");
     console.log(`Updated ${fileKey} data, changes count: ${queueLength}`);
 
     const nextChangesCount = queue.length;
 
     if (nextChangesCount) {
-        processes[fileKey].target = updateFile(fileKey, filePath, processes);
+        processes[fileKey].target = updateFile(opts, processes);
     } else {
         processes[fileKey].target = null;
     }

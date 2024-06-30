@@ -34,4 +34,21 @@ export type SegmentItem = {
 export type File = { path: string; key: string };
 export type Files = File[];
 
+export type IndentRule = {
+    type: "space" | "tab";
+    size: number;
+};
+
+export type ConfigurationOptions = {
+    pattern: string;
+    indentSize: IndentRule["size"];
+    indentType: IndentRule["type"];
+};
+
+export type UpdateFileOpts = {
+    fileKey: string;
+    filePath: string;
+    indent: string;
+};
+
 export type InioRequest = IncomingMessage & { url: URL; config: Configuration };
