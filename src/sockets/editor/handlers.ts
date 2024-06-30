@@ -21,8 +21,11 @@ export const editorHandlers = (_io: Server, socket: Socket, config: Configuratio
                 type: "update",
                 value: value || "",
             },
-            fileKey,
-            fileData.path,
+            {
+                fileKey,
+                filePath: fileData.path,
+                indent: config.indent,
+            },
             processes,
         );
     };
@@ -36,8 +39,11 @@ export const editorHandlers = (_io: Server, socket: Socket, config: Configuratio
                     key,
                     type: "create",
                 },
-                fileData.key,
-                fileData.path,
+                {
+                    fileKey: fileData.key,
+                    filePath: fileData.path,
+                    indent: config.indent,
+                },
                 processes,
             );
         });
@@ -52,8 +58,11 @@ export const editorHandlers = (_io: Server, socket: Socket, config: Configuratio
                     key,
                     type: "delete",
                 },
-                fileData.key,
-                fileData.path,
+                {
+                    fileKey: fileData.key,
+                    filePath: fileData.path,
+                    indent: config.indent,
+                },
                 processes,
             );
         });
