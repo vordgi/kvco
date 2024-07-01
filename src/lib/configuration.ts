@@ -45,7 +45,7 @@ export class Configuration {
 
         if (ext !== ".json") return [];
 
-        const items = await findSegmentItems(dir);
+        const items = await findSegmentItems(dir.replace(/^\.\//, ""));
         const files = items?.reduce<Files>((acc, cur) => {
             if ((cur.name === name || name === "<key>") && !cur.isDir) {
                 acc.push({
