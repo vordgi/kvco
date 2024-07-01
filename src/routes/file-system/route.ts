@@ -2,6 +2,7 @@ import { type ServerResponse } from "http";
 import { type InioRequest } from "../../lib/types";
 import { findSegmentItems } from "../../lib/find-segment-items";
 import { Configuration } from "../../lib/configuration";
+import path from "path";
 
 export const GET = async (req: InioRequest, res: ServerResponse) => {
     const dir = req.url.searchParams.get("dir");
@@ -22,8 +23,14 @@ export const GET = async (req: InioRequest, res: ServerResponse) => {
         return res.end();
     }
 
-    const segmentKeys = files.reduce<{ [key: string]: { name: string; isDir: boolean } }>((acc, cur) => {
-        if (!acc[cur.name]) acc[cur.name] = { name: cur.name, isDir: cur.isDir };
+    const segmentKeys = files.reduce<{ [key: string]: { name: string; isDir: boolean; path: string } }>((acc, cur) => {
+        if (!acc[cur.name]) {
+            acc[cur.name] = {
+                name: cur.name,
+                isDir: cur.isDir,
+                path: path.posix.relative(process.cwd(), cur.path),
+            };
+        }
         return acc;
     }, {});
     return res.end(JSON.stringify(Object.values(segmentKeys)));

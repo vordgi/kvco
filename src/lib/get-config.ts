@@ -2,7 +2,7 @@ import path from "path";
 import { existsSync } from "fs";
 import { Configuration } from "./configuration";
 
-const DEFAULT_PATTERN = "./<key>.json";
+const DEFAULT_PATTERN = "<key>.json";
 const DEFAULT_CONFIG_PATH = "./inio.config.js";
 const DEFAULT_INDENT_TYPE = "space";
 const DEFAULT_INDENT_SIZE = 4;
