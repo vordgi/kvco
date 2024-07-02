@@ -28,6 +28,9 @@ export const getConfig = async (): Promise<Configuration> => {
     const indentType = process.env.INDENT_TYPE || inioConfig?.indent?.type || DEFAULT_INDENT_TYPE;
     const indentSize = process.env.INDENT_size || inioConfig?.indent?.size || DEFAULT_INDENT_SIZE;
 
-    const files = await Configuration.loadFiles(pattern);
-    return new Configuration({ pattern, indentType, indentSize }, files);
+    const files = await Configuration.loadFiles(
+        inioConfig?.experimental.pattern || pattern,
+        inioConfig?.experimental.ignore,
+    );
+    return new Configuration({ pattern, indentType, indentSize, experimental: inioConfig?.experimental }, files);
 };

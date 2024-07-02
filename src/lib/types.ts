@@ -43,6 +43,10 @@ export type ConfigurationOptions = {
     pattern: string;
     indentSize: IndentRule["size"];
     indentType: IndentRule["type"];
+    experimental?: {
+        pattern?: string[];
+        ignore?: string[];
+    };
 };
 
 export type UpdateFileOpts = {
