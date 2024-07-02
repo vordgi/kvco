@@ -16,11 +16,17 @@ export class Configuration {
         missings?: boolean;
     } = {};
 
+    experimental?: {
+        patterns?: string[];
+        ignore?: string[];
+    };
+
     constructor(options: ConfigurationOptions, files: Configuration["files"]) {
-        const { pattern, indentSize, indentType } = options;
+        const { pattern, indentSize, indentType, experimental } = options;
         Configuration.preventInvalidPattern(pattern);
         this._pattern = pattern;
         this.files = files;
+        this.experimental = experimental;
         this.indent = indentType === "tab" ? "\t".repeat(indentSize) : " ".repeat(indentSize);
     }
 
@@ -40,12 +46,12 @@ export class Configuration {
         }
     }
 
-    static async loadFiles(pattern: string) {
+    static async loadPatternFiles(pattern: string, otherPatterns: string[] = [], ignore: string | string[] = []) {
         const { dir, name, ext } = path.parse(pattern);
 
         if (ext !== ".json") return [];
 
-        const items = await findSegmentItems(dir.replace(/^\.\//, ""));
+        const items = await findSegmentItems(dir.replace(/^\.\//, ""), otherPatterns, ignore);
         const files = items?.reduce<Files>((acc, cur) => {
             if ((cur.name === name || name === "<key>") && !cur.isDir) {
                 acc.push({
@@ -59,9 +65,25 @@ export class Configuration {
         return files || [];
     }
 
+    static async loadFiles(pattern: string | string[], ignore: string | string[]) {
+        if (typeof pattern === "string") {
+            return this.loadPatternFiles(pattern, [], ignore);
+        }
+        const allItems = await Promise.all(
+            pattern.map((pt) =>
+                this.loadPatternFiles(
+                    pt,
+                    pattern.filter((i) => i !== pt),
+                    ignore,
+                ),
+            ),
+        );
+        return allItems.flat();
+    }
+
     async updatePattern(pattern: string) {
         Configuration.preventInvalidPattern(pattern);
-        const files = await Configuration.loadFiles(pattern);
+        const files = await Configuration.loadFiles(pattern, this.experimental?.ignore || []);
         this.files = files;
         this._pattern = pattern;
     }

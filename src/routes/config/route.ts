@@ -7,6 +7,7 @@ export const GET = async (req: InioRequest, res: ServerResponse) => {
             version: req.config.version,
             pattern: req.config.pattern,
             filters: req.config.filters,
+            experimental: req.config.experimental,
         }),
     );
 };
