@@ -15,22 +15,15 @@ export const getConfig = async (): Promise<Configuration> => {
         inioConfig = inioConfigModule.default;
     }
     const pattern = process.env.PATTERN || inioConfig?.pattern || DEFAULT_PATTERN;
+    Configuration.preventInvalidPatterns(pattern);
+    const ignore = process.env.IGNORE || inioConfig?.ignore;
 
-    if (!pattern) {
-        console.error('Provide files pattern, call "inio help" for more information');
-        process.exit();
-    }
-
-    if (!pattern.includes("<key>")) {
-        console.error('Provide key in files pattern, call "inio help" for more information');
-        process.exit();
-    }
     const indentType = process.env.INDENT_TYPE || inioConfig?.indent?.type || DEFAULT_INDENT_TYPE;
     const indentSize = process.env.INDENT_size || inioConfig?.indent?.size || DEFAULT_INDENT_SIZE;
 
-    const files = await Configuration.loadFiles(
-        inioConfig?.experimental?.pattern || pattern,
-        inioConfig?.experimental?.ignore,
+    const files = await Configuration.loadFiles(pattern, ignore);
+    return new Configuration(
+        { pattern, ignore, indentType, indentSize, experimental: inioConfig?.experimental },
+        files,
     );
-    return new Configuration({ pattern, indentType, indentSize, experimental: inioConfig?.experimental }, files);
 };
