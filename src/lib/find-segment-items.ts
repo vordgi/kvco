@@ -14,7 +14,7 @@ export const findSegmentItems = async (
     const ignoreArr = typeof ignore === "string" ? [ignore, ...otherPatterns] : [...otherPatterns, ...ignore];
 
     const segments = pattern.split("/");
-    const globPath = [".", ...segments.map((segment) => (segment === "<key>" ? "*" : segment))].join("/");
+    const globPath = [".", ...segments.map((segment) => segment.replace("<key>", "*"))].join("/");
 
     const files = await glob(globPath, {
         ignore: ignoreArr,
