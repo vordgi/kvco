@@ -2,15 +2,19 @@ import { Server, Socket } from "socket.io";
 import { type Processes } from "../../lib/types";
 import { makeChanges } from "../../lib/make-changes";
 import { Configuration } from "../../lib/configuration";
+import path from "path";
 
 const processes: Processes = {};
 
 export const editorHandlers = (_io: Server, socket: Socket, config: Configuration) => {
-    const edit = (data: { key: string; value: string; fileKey: string }) => {
+    const edit = (data: { key: string; value: string; fileKey: string; path: string }) => {
         const key = data.key;
         const value = data.value;
         const fileKey = data.fileKey;
-        const fileData = config.files.find((f) => f.key === fileKey);
+        const filePath = data.path;
+        const fileData = config.files.find(
+            (f) => f.path === path.join(process.cwd(), filePath).replaceAll(path.sep, "/"),
+        );
 
         if (!fileData) return;
 

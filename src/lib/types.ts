@@ -18,7 +18,7 @@ export type QueueItem =
 
 export type Item = { [key: string]: Item } | string | undefined | null;
 
-export type Values = { [key: string]: string | undefined | null };
+export type Values = { [key: string]: { value: string | undefined | null; path: string } };
 
 export type Process = { target: Promise<void> | null; queue: QueueItem[] };
 
