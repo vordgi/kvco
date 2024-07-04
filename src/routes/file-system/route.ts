@@ -23,7 +23,12 @@ export const GET = async (req: InioRequest, res: ServerResponse) => {
     }
 
     const segmentKeys = files.reduce<{ [key: string]: { name: string; isDir: boolean } }>((acc, cur) => {
-        if (!acc[cur.name]) acc[cur.name] = { name: cur.name, isDir: cur.isDir };
+        if (!acc[cur.name]) {
+            acc[cur.name] = {
+                name: cur.name,
+                isDir: cur.isDir,
+            };
+        }
         return acc;
     }, {});
     return res.end(JSON.stringify(Object.values(segmentKeys)));

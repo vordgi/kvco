@@ -4,7 +4,7 @@ import { version } from "../../package.json";
 import path from "path";
 
 export class Configuration {
-    private _pattern: string;
+    private _pattern: string | string[];
 
     files: Files;
 
@@ -16,11 +16,16 @@ export class Configuration {
         missings?: boolean;
     } = {};
 
+    ignore?: string[];
+
+    experimental?: unknown;
+
     constructor(options: ConfigurationOptions, files: Configuration["files"]) {
-        const { pattern, indentSize, indentType } = options;
-        Configuration.preventInvalidPattern(pattern);
+        const { pattern, ignore, indentSize, indentType, experimental } = options;
         this._pattern = pattern;
+        this.ignore = ignore;
         this.files = files;
+        this.experimental = experimental;
         this.indent = indentType === "tab" ? "\t".repeat(indentSize) : " ".repeat(indentSize);
     }
 
@@ -34,20 +39,41 @@ export class Configuration {
     }
 
     static preventInvalidPattern(pattern: string) {
+        if (!pattern) {
+            console.error(
+                `Invalid pattern: "${pattern}". Provide files pattern, call "inio help" for more information`,
+            );
+            process.exit();
+        }
+        if (!pattern.includes("<key>")) {
+            console.error(
+                `Invalid pattern: "${pattern}". Provide key in files pattern, call "inio help" for more information`,
+            );
+            process.exit();
+        }
         if (!Configuration.validatePattern(pattern)) {
             console.log(`Invalid pattern: "${pattern}". It goes beyond tool scope`);
             process.exit();
         }
     }
 
-    static async loadFiles(pattern: string) {
-        const { dir, name, ext } = path.parse(pattern);
+    static preventInvalidPatterns(pattern: string | string[]) {
+        if (typeof pattern === "string") {
+            Configuration.preventInvalidPattern(pattern);
+        } else {
+            pattern.forEach((pt) => Configuration.preventInvalidPattern(pt));
+        }
+    }
+
+    static async loadPatternFiles(pattern: string, otherPatterns: string[] = [], ignore: string | string[] = []) {
+        const { name, ext } = path.parse(pattern);
 
         if (ext !== ".json") return [];
 
-        const items = await findSegmentItems(dir);
+        const items = await findSegmentItems(pattern.replace(/^\.\//, ""), otherPatterns, ignore);
+
         const files = items?.reduce<Files>((acc, cur) => {
-            if ((cur.name === name || name === "<key>") && !cur.isDir) {
+            if (!cur.isDir) {
                 acc.push({
                     path: cur.path,
                     key: name === "<key>" ? cur.name : cur.key || "N/A",
@@ -59,11 +85,33 @@ export class Configuration {
         return files || [];
     }
 
-    async updatePattern(pattern: string) {
-        Configuration.preventInvalidPattern(pattern);
-        const files = await Configuration.loadFiles(pattern);
+    static async loadFiles(pattern: string | string[], ignore: string | string[]) {
+        if (typeof pattern === "string") {
+            return this.loadPatternFiles(pattern, [], ignore);
+        }
+        const allItems = await Promise.all(
+            pattern.map((pt) =>
+                this.loadPatternFiles(
+                    pt,
+                    pattern.filter((i) => i !== pt),
+                    ignore,
+                ),
+            ),
+        );
+        return allItems.flat();
+    }
+
+    async updatePattern(pattern: string | string[]) {
+        Configuration.preventInvalidPatterns(pattern);
+        const files = await Configuration.loadFiles(pattern, this?.ignore || []);
         this.files = files;
         this._pattern = pattern;
+    }
+
+    async updateIgnore(ignore: string[]) {
+        const files = await Configuration.loadFiles(this.pattern, ignore || []);
+        this.files = files;
+        this.ignore = ignore;
     }
 
     async updateFilters(filters: { [key: string]: string }) {

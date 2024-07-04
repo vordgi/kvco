@@ -21,7 +21,10 @@ export const GET = async (req: InioRequest, res: ServerResponse) => {
     return res.end(
         JSON.stringify({
             list: paginatedData,
-            keys: req.config.files.map(({ key }) => key),
+            keys: req.config.files.reduce<string[]>((acc, { key }) => {
+                if (!acc.includes(key)) acc.push(key);
+                return acc;
+            }, []),
             total: resultData.length,
         }),
     );

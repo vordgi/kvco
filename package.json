@@ -1,6 +1,6 @@
 {
   "name": "@nimpl/inio",
-  "version": "0.8.2",
+  "version": "0.8.3",
   "description": "Utility for editing a group of JSON files",
   "bin": {
     "inio": "./dist/index.js",
@@ -50,6 +50,7 @@
     "typescript-eslint": "7.13.0"
   },
   "dependencies": {
+    "glob": "10.4.2",
     "socket.io": "4.7.5"
   }
 }
