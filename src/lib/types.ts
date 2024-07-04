@@ -40,13 +40,11 @@ export type IndentRule = {
 };
 
 export type ConfigurationOptions = {
-    pattern: string;
+    pattern: string | string[];
     indentSize: IndentRule["size"];
     indentType: IndentRule["type"];
-    experimental?: {
-        pattern?: string[];
-        ignore?: string[];
-    };
+    ignore?: string[];
+    experimental?: unknown;
 };
 
 export type UpdateFileOpts = {

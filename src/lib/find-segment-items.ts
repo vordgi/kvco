@@ -12,10 +12,10 @@ export const findSegmentItems = async (
         return [];
     }
     const ignoreArr = typeof ignore === "string" ? [ignore, ...otherPatterns] : [...otherPatterns, ...ignore];
-    ignoreArr.concat();
 
     const segments = pattern.split("/");
-    const globPath = [".", ...segments.map((segment) => (segment === "<key>" ? "*" : segment)), "*"].join("/");
+    const globPath = [".", ...segments.map((segment) => (segment === "<key>" ? "*" : segment))].join("/");
+
     const files = await glob(globPath, {
         ignore: ignoreArr,
         posix: true,
@@ -30,7 +30,7 @@ export const findSegmentItems = async (
             itemsData.push({
                 name,
                 isDir: !ext,
-                path: path.posix.join(process.cwd(), file),
+                path: path.join(process.cwd(), file).replaceAll(path.sep, "/"),
                 key: keyIndex !== -1 ? file.split("/")[keyIndex] : name,
             });
         }
