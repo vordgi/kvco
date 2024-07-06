@@ -12,7 +12,7 @@ export const GET = async (req: InioRequest, res: ServerResponse) => {
         resultData = data.filter((item) => item.key.includes(search));
     }
     if (req.config.filters.missings) {
-        resultData = resultData.filter((item) => req.config.files.some(({ key }) => !item.values[key]));
+        resultData = resultData.filter((item) => Object.keys(item.values).some((value) => !value));
     }
     let paginatedData = resultData;
     if (page && countOnPage) {
