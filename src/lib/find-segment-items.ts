@@ -14,7 +14,7 @@ export const findSegmentItems = async (
     const ignoreArr = typeof ignore === "string" ? [ignore, ...otherPatterns] : [...otherPatterns, ...ignore];
 
     const segments = pattern.split("/");
-    const globPath = [".", ...segments.map((segment) => (segment === "<key>" ? "*" : segment))].join("/");
+    const globPath = [".", ...segments.map((segment) => segment.replace("<key>", "*"))].join("/");
 
     const files = await glob(globPath, {
         ignore: ignoreArr,
@@ -23,15 +23,17 @@ export const findSegmentItems = async (
     });
     const keyIndex = segments.indexOf("<key>");
 
-    const itemsData: { name: string; isDir: boolean; path: string; key?: string }[] = [];
+    const itemsData: SegmentItem[] = [];
     for await (const file of files) {
         const { name, ext } = path.parse(file);
         if (!ext || ext === ".json") {
+            const fileSegments = file.split("/");
             itemsData.push({
                 name,
                 isDir: !ext,
-                path: path.join(process.cwd(), file).replaceAll(path.sep, "/"),
-                key: keyIndex !== -1 ? file.split("/")[keyIndex] : name,
+                path: file,
+                key: keyIndex !== -1 ? fileSegments[keyIndex] : name,
+                staticPart: keyIndex === -1 ? file : fileSegments.filter((_, index) => index !== keyIndex).join("/"),
             });
         }
     }

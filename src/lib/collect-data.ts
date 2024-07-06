@@ -1,7 +1,14 @@
-import { type Values, type Item, type Files } from "./types";
+import { type DataValues, type Item, type Files } from "./types";
 import { getFile } from "./get-file";
 
-const collectItems = (data: Item, fileKey: string, accData: { [key: string]: Values }, accKey: string) => {
+type CollectedData = { [pattern: string]: { [key: string]: DataValues } };
+type ResultData = {
+    key: string;
+    staticPart: string;
+    values: DataValues;
+}[];
+
+const collectItems = (data: Item, fileKey: string, accData: CollectedData[string], accKey: string) => {
     if (data === null && accKey.match(/(^|\.)[0-9]+$/)) return;
 
     if (data && typeof data === "object") {
@@ -19,13 +26,17 @@ const collectItems = (data: Item, fileKey: string, accData: { [key: string]: Val
 };
 
 export const collectData = async (files: Files) => {
-    const result: { [key: string]: Values } = {};
+    const result: CollectedData = {};
     for await (const fileData of files) {
+        result[fileData.staticPart] ||= {};
         const data = await getFile(fileData.path);
-        collectItems(data, fileData.key, result, "");
+        collectItems(data, fileData.key, result[fileData.staticPart], "");
     }
-    const sortedList = Object.entries(result)
-        .map(([key, values]) => ({ key, values }))
-        .sort((a, b) => a.key.localeCompare(b.key));
-    return sortedList;
+    const fullData = Object.entries(result).reduce<ResultData>((acc, [staticPart, data]) => {
+        Object.entries(data).forEach(([key, values]) => {
+            acc.push({ key, staticPart, values });
+        });
+        return acc;
+    }, []);
+    return fullData.sort((a, b) => a.key.localeCompare(b.key));
 };
