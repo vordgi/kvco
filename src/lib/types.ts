@@ -18,7 +18,7 @@ export type QueueItem =
 
 export type Item = { [key: string]: Item } | string | undefined | null;
 
-export type Values = { [key: string]: { value: string | undefined | null; path: string } };
+export type DataValues = { [key: string]: string | null | undefined };
 
 export type Process = { target: Promise<void> | null; queue: QueueItem[] };
 
@@ -28,10 +28,11 @@ export type SegmentItem = {
     name: string;
     isDir: boolean;
     path: string;
-    key?: string;
+    key: string;
+    staticPart: string;
 };
 
-export type File = { path: string; key: string };
+export type File = { path: string; key: string; staticPart: string };
 export type Files = File[];
 
 export type IndentRule = {
@@ -48,7 +49,6 @@ export type ConfigurationOptions = {
 };
 
 export type UpdateFileOpts = {
-    fileKey: string;
     filePath: string;
     indent: string;
 };

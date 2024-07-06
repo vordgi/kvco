@@ -2,11 +2,11 @@ import { type UpdateFileOpts, type Processes, type QueueItem } from "./types";
 import { updateFile } from "./update-file";
 
 export const makeChanges = (item: QueueItem, opts: UpdateFileOpts, processes: Processes) => {
-    const { fileKey } = opts;
-    if (!processes[fileKey]) processes[fileKey] = { target: null, queue: [] };
-    processes[fileKey].queue.push(item);
+    const { filePath } = opts;
+    if (!processes[filePath]) processes[filePath] = { target: null, queue: [] };
+    processes[filePath].queue.push(item);
 
-    if (processes[fileKey].target) return;
+    if (processes[filePath].target) return;
 
-    processes[fileKey].target = updateFile(opts, processes);
+    processes[filePath].target = updateFile(opts, processes);
 };

@@ -75,6 +75,7 @@ export class Configuration {
         const files = items?.reduce<Files>((acc, cur) => {
             if (!cur.isDir) {
                 acc.push({
+                    staticPart: cur.staticPart,
                     path: cur.path,
                     key: name === "<key>" ? cur.name : cur.key || "N/A",
                 });
@@ -98,7 +99,7 @@ export class Configuration {
                 ),
             ),
         );
-        return allItems.flat();
+        return allItems.flat().sort((a, b) => a.key.localeCompare(b.key));
     }
 
     async updatePattern(pattern: string | string[]) {
