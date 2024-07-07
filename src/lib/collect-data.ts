@@ -1,12 +1,5 @@
-import { type DataValues, type Item, type Files } from "./types";
+import { type Item, type Files, type CollectedData, type ResultData } from "./types";
 import { getFile } from "./get-file";
-
-type CollectedData = { [pattern: string]: { [key: string]: DataValues } };
-type ResultData = {
-    key: string;
-    staticPart: string;
-    values: DataValues;
-}[];
 
 const collectItems = (data: Item, fileKey: string, accData: CollectedData[string], accKey: string) => {
     if (data === null && accKey.match(/(^|\.)[0-9]+$/)) return;

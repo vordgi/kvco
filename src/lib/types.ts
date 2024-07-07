@@ -54,3 +54,11 @@ export type UpdateFileOpts = {
 };
 
 export type InioRequest = IncomingMessage & { url: URL; config: Configuration };
+
+export type CollectedData = { [pattern: string]: { [key: string]: DataValues } };
+
+export type ResultData = {
+    key: string;
+    staticPart: string;
+    values: DataValues;
+}[];
