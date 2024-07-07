@@ -14,6 +14,8 @@ export class Configuration {
 
     filters: {
         missings?: boolean;
+        repetitiveKeys?: boolean;
+        repetitiveValues?: boolean;
     } = {};
 
     ignore?: string[];
