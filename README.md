@@ -1,4 +1,4 @@
-# @nimpl/inio
+# k-v
 
 Utility for editing a group of JSON files
 
@@ -13,13 +13,19 @@ Deletion - delete the key from all files
 ## Installation
 
 ```bash
-npm install @nimpl/inio -g
+npm install k-v -g
 ```
 
 ## Usage
 
 ```bash
-inio
+k-v
+```
+
+or
+
+```bash
+kv
 ```
 
 ## Configuration
@@ -31,16 +37,19 @@ To configure **inio**, create an `inio.config.js` file in the `.json` files dire
 `pattern` - the pattern by which to search for files. The pattern should contain a dynamic part `<key>`, f.e. "`./terms/<key>.json`" (by default "`./<key>.json`")
 
 Now simply call `inio` in the terminal:
+
 ```bash
 inio
 ```
 
 You can also specify the path to the config by setting the `CONFIG_PATH` environment variable:
+
 ```bash
 CONFIG_PATH="../../inio.config.js" inio
 ```
 
 You can also pass package options through environment variables, converting options to **UPPER_SNAKE_CASE** format:
+
 ```bash
 PATTERN="./terms/<key>.json" inio
 ```
@@ -71,4 +80,4 @@ Create tasks with wishes, ideas, difficulties, etc. All of them will definitely 
 
 ## License
 
-[MIT](https://github.com/vordgi/nimpl-inio/blob/main/LICENSE)
+[BSD-1-Clause](https://github.com/vordgi/nimpl-inio/blob/main/LICENSE)
