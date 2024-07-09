@@ -36,7 +36,7 @@
     "email": "vordgi1@gmail.com",
     "url": "https://github.com/vordgi/"
   },
-  "license": "MIT",
+  "license": "BSD-1-Clause",
   "devDependencies": {
     "@types/node": "20.0.0",
     "cross-env": "7.0.3",
