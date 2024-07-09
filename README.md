@@ -1,5 +1,7 @@
 # kvco
 
+[k-v.co](https://k-v.co)
+
 Utility for editing a group of JSON files
 
 ## Features
@@ -22,30 +24,32 @@ npm install kvco -g
 kvco
 ```
 
+_also you can run via `kv` or `k-v`_
+
 ## Configuration
 
-To configure **inio**, create an `inio.config.js` file in the `.json` files directory
+To configure **kvco**, create an `kvco.config.js` file in the `.json` files directory
 
 **Options**
 
 `pattern` - the pattern by which to search for files. The pattern should contain a dynamic part `<key>`, f.e. "`./terms/<key>.json`" (by default "`./<key>.json`")
 
-Now simply call `inio` in the terminal:
+Now simply call `kvco` in the terminal:
 
 ```bash
-inio
+kvco
 ```
 
 You can also specify the path to the config by setting the `CONFIG_PATH` environment variable:
 
 ```bash
-CONFIG_PATH="../../inio.config.js" inio
+CONFIG_PATH="../../kvco.config.js" kvco
 ```
 
 You can also pass package options through environment variables, converting options to **UPPER_SNAKE_CASE** format:
 
 ```bash
-PATTERN="./terms/<key>.json" inio
+PATTERN="./terms/<key>.json" kvco
 ```
 
 Where `./terms/<key>.json` - is the pattern of files that you want to edit, with the following file structure:
@@ -62,7 +66,7 @@ The pattern should contain `<key>` - this is a dynamic parameter, equivalent to 
 
 The utility will start a local server, through which all your file changes will subsequently occur.
 
-Then open [inio.nimpl.tech](https://inio.nimpl.tech/) and edit the files through a comfortable interface.
+Then open [k-v.co](https://k-v.co/) and edit the files through a comfortable interface.
 
 ![application screenshot](docs/app.png)
 
@@ -74,4 +78,4 @@ Create tasks with wishes, ideas, difficulties, etc. All of them will definitely 
 
 ## License
 
-[BSD-1-Clause](https://github.com/vordgi/nimpl-inio/blob/main/LICENSE)
+[BSD-1-Clause](https://github.com/vordgi/kvco/blob/main/LICENSE)
