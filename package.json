@@ -1,17 +1,16 @@
 {
-  "name": "@nimpl/inio",
-  "version": "1.1.0",
+  "name": "k-v",
+  "version": "1.1.1",
   "description": "Utility for editing a group of JSON files",
   "bin": {
-    "inio": "./dist/index.js",
-    "nimpl-inio": "./dist/index.js"
+    "kv": "./dist/index.js",
+    "k-v": "./dist/index.js"
   },
   "main": "./dist/index.js",
   "scripts": {
     "dev": "cross-env NODE_ENV=development ts-node src/index.ts",
     "build": "tsc",
     "start": "node dist/index.js",
-    "nimpl:inio": "pnpm --filter @nimpl/inio",
     "lint": "eslint .",
     "eslint": "eslint",
     "prepare": "husky"
@@ -25,18 +24,22 @@
     "inio",
     "json",
     "editor",
-    "nimpl"
+    "nimpl",
+    "key-value",
+    "k-v",
+    "kv",
+    "browser"
   ],
   "repository": {
     "type": "git",
-    "url": "git://github.com/vordgi/nimpl-inio.git"
+    "url": "git://github.com/vordgi/k-v.git"
   },
   "author": {
     "name": "Savelyev Alexander",
-    "email": "vordgi1@gmail.com",
+    "email": "vordgi@mail.com",
     "url": "https://github.com/vordgi/"
   },
-  "license": "MIT",
+  "license": "BSD-1-Clause",
   "devDependencies": {
     "@types/node": "20.0.0",
     "cross-env": "7.0.3",
