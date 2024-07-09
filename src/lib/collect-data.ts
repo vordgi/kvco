@@ -10,7 +10,7 @@ const collectItems = (data: Item, fileKey: string, accData: CollectedData[string
         });
     } else {
         if (accKey in accData && (typeof accData[accKey] !== "object" || accData[accKey] === null)) {
-            console.error(`Different schema for key "${accKey}" - inio will ignore this key`);
+            console.error(`Different schema for key "${accKey}" - kvco will ignore this key`);
         } else {
             accData[accKey] ||= {};
             accData[accKey][fileKey] = data;

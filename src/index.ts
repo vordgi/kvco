@@ -12,9 +12,9 @@ if (process.argv.includes("help")) {
     process.exit();
 }
 
-const CLIENT_ORIGIN = process.env.NODE_ENV === "development" ? "*" : "https://inio.nimpl.tech";
+const CLIENT_ORIGIN = process.env.NODE_ENV === "development" ? "*" : "https://k-v.co";
 
-const inio = async () => {
+const kvco = async () => {
     const config = await getConfig();
 
     const io = new Server();
@@ -74,8 +74,8 @@ const inio = async () => {
     io.on("connection", onConnection);
 
     server.listen(8000, () => {
-        console.log("inio: Server runned, visit https://inio.nimpl.tech/edit to continue");
+        console.log("kvco: Server runned, visit https://k-v.co/edit to continue");
     });
 };
 
-inio();
+kvco();

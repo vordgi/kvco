@@ -43,13 +43,13 @@ export class Configuration {
     static preventInvalidPattern(pattern: string) {
         if (!pattern) {
             console.error(
-                `Invalid pattern: "${pattern}". Provide files pattern, call "inio help" for more information`,
+                `Invalid pattern: "${pattern}". Provide files pattern, call "kvco help" for more information`,
             );
             process.exit();
         }
         if (!pattern.includes("<key>")) {
             console.error(
-                `Invalid pattern: "${pattern}". Provide key in files pattern, call "inio help" for more information`,
+                `Invalid pattern: "${pattern}". Provide key in files pattern, call "kvco help" for more information`,
             );
             process.exit();
         }
