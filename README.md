@@ -1,4 +1,4 @@
-# k-v
+# kvco
 
 Utility for editing a group of JSON files
 
@@ -13,19 +13,13 @@ Deletion - delete the key from all files
 ## Installation
 
 ```bash
-npm install k-v -g
+npm install kvco -g
 ```
 
 ## Usage
 
 ```bash
-k-v
-```
-
-or
-
-```bash
-kv
+kvco
 ```
 
 ## Configuration
