@@ -1,4 +1,4 @@
-# @nimpl/inio
+# k-v
 
 Utility for editing a group of JSON files
 
@@ -13,13 +13,19 @@ Deletion - delete the key from all files
 ## Installation
 
 ```bash
-npm install @nimpl/inio -g
+npm install k-v -g
 ```
 
 ## Usage
 
 ```bash
-inio
+k-v
+```
+
+or
+
+```bash
+kv
 ```
 
 ## Configuration
