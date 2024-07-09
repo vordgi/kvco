@@ -1,10 +1,11 @@
 {
-  "name": "k-v",
+  "name": "kvco",
   "version": "1.1.1",
   "description": "Utility for editing a group of JSON files",
   "bin": {
     "kv": "./dist/index.js",
-    "k-v": "./dist/index.js"
+    "k-v": "./dist/index.js",
+    "kvco": "./dist/index.js"
   },
   "main": "./dist/index.js",
   "scripts": {
@@ -32,7 +33,7 @@
   ],
   "repository": {
     "type": "git",
-    "url": "git://github.com/vordgi/k-v.git"
+    "url": "git://github.com/vordgi/kvco.git"
   },
   "author": {
     "name": "Savelyev Alexander",
